@@ -1,9 +1,14 @@
-import React from 'react'
-
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
+import { Text } from "@chakra-ui/react";
 function Profile() {
+  const token = useSelector((state: RootState) => state.auth.token);
   return (
-    <div>Profile</div>
-  )
+    <>
+      <div>Profile</div>
+      <Text>Token: {token}</Text>
+    </>
+  );
 }
 
-export default Profile
+export default Profile;

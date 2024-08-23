@@ -18,11 +18,11 @@ function LandingPage() {
         minHeight="100vh"
       >
         <Navbar />
-        <Box textAlign="center" mt={20}>
+        <Box textAlign="center" mt={10}>
           <Heading as="h1" fontSize="4xl" fontWeight="bold" color="black">
             Welcome to ChitChat App
           </Heading>
-          <Text fontSize="lg" color="black" mb={9}>
+          <Text fontSize="lg" color="black" mb={8}>
             Discover the power of real-time communication.
           </Text>
           <LoginForm/>
