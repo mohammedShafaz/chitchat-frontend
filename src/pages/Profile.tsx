@@ -1,12 +1,16 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
-import { Text } from "@chakra-ui/react";
+import { Text, Box } from "@chakra-ui/react";
+import UserDashNavbar from "../components/UserDashNavbar";
+
 function Profile() {
-  const token = useSelector((state: RootState) => state.auth.token);
+  const user = useSelector((state: RootState) => state.auth.user);
   return (
     <>
-      <div>Profile</div>
-      <Text>Token: {token}</Text>
+      <Box>
+        <UserDashNavbar />
+        <Text> Welcome {user?.username}</Text>
+      </Box>
     </>
   );
 }

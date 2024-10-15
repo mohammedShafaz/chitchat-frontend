@@ -23,57 +23,46 @@ function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const toast = useToast({position: 'top-right'});
+  const toast = useToast({ position: "top-right" });
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(email, password);
-
+    setEmailError("");
+    setPasswordError("");
     if (!email) {
-      toast({
-        title: "Email or username missing",
-        description: "Please enter your email or username",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
+      setEmailError("Please enter your email or username.");
       return;
     }
+
     if (!password) {
-      toast({
-        title: "Password missing",
-        description: "Please enter your password",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
+      setPasswordError("Please enter your password.");
       return;
     }
+
     try {
       setLoading(true);
       const response = await loginApi({
         email: email.trim(),
         password: password.trim(),
       });
-      {
-        console.log("response", response);
-      }
 
       if (response.status === 200) {
         toast({
           title: "Login Successful",
-          description: "Welcome to chitchat",
+          description: "Welcome to ChitChat",
           status: "success",
           duration: 3000,
           isClosable: true,
         });
         dispatch(login(response.data.token));
-        localStorage.setItem("token ", response.data.token);
         navigate("/Profile");
       } else {
+        setPasswordError("Invalid credentials. Please try again.");
         toast({
-          title: response.data.message,
+          title: response.data.message || "Login failed",
           description: response.data.message || "Invalid credentials",
           status: "error",
           duration: 3000,
@@ -81,98 +70,101 @@ function LoginForm() {
         });
       }
     } catch (error) {
-      console.error(error);
-      if (axios.isAxiosError(error) && error.response) {
-        const errorMessage =
-          error.response.data.message || "Invalid credentials";
-        toast({
-          title: "Login failed",
-          description: errorMessage,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      } else {
-        toast({
-          title: "Error",
-          description: "Something went wrong. Please try again later.",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      }
+      console.error("Login error:", error);
+      const errorMessage =
+        axios.isAxiosError(error) && error.response
+          ? error.response.data.message || "Invalid credentials"
+          : "Something went wrong. Please try again later.";
+      setPasswordError(errorMessage);
+    
     } finally {
       setLoading(false);
     }
   };
   return (
-    <>
-      <Flex justifyContent="center">
-        <Box
-          color="black"
-          bgColor="white"
-          w={{ base: "90%", md: "50%", lg: "25%" }}
-          p={5}
-          borderRadius={15}
-          boxShadow="2xl"
+    <Flex justifyContent="center">
+      <Box
+        color="black"
+        bgColor="white"
+        w={{ base: "100%", sm: "80%", md: "60%", lg: "40%" }}
+        minW="400px"
+        p={6}
+        borderRadius={7}
+        boxShadow="dark-lg"
+        border='none'
+      >
+        <Text
+          as="h1"
+          fontSize="4xl"
+          fontWeight="bold"
+          mb={4}
+          textAlign="center"
         >
-          <Text fontSize="5xl" fontFamily="system-ui" fontWeight="bolder">
-            {" "}
-            Login
-          </Text>
-          <form action="submit" onSubmit={handleLogin}>
-            <FormControl mt={5}>
-              <FormLabel>Email or username</FormLabel>
-              <InputGroup>
-                <InputLeftElement pointerEvents="none">
-                  <FaUser color="grey" />
-                </InputLeftElement>
-                <Input
-                  borderBottom="1px solid grey"
-                  mb={5}
-                  type="text"
-                  placeholder="Type your username or email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </InputGroup>
-              <FormLabel>Password</FormLabel>
-              <InputGroup>
-                <InputLeftElement pointerEvents="none">
-                  <FaLock color="grey" />
-                </InputLeftElement>
-                <Input
-                  borderBottom="1px solid grey"
-                  mb={5}
-                  type="password"
-                  placeholder="Type your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </InputGroup>
+          Sign In
+        </Text>
+        <form onSubmit={handleLogin}>
+          <FormControl mt={4}>
+            <FormLabel>Email or Username</FormLabel>
+            <InputGroup>
+              <InputLeftElement pointerEvents="none">
+                <FaUser color="grey" />
+              </InputLeftElement>
+              <Input
+                borderBottom="1px solid grey"
+                mb={4}
+                type="text"
+                placeholder="Type your username or email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </InputGroup>
+            {emailError && (
+              <Text color="red.500" fontSize="sm">
+                {emailError}
+                
+              </Text>
+            )}
 
-              <Flex mb={5} justifyContent="right">
-                <Link color="#525151" alignItems="start">
-                  {" "}
-                  forgot password?
-                </Link>
-                <br />
-              </Flex>
-              <Button
-                colorScheme="teal"
-                w="110px"
-                type="submit"
-                isLoading={loading}
-                loadingText="Logging in"
-                isDisabled={loading}
-              >
-                Login
-              </Button>
-            </FormControl>
-          </form>
-        </Box>
-      </Flex>
-    </>
+            <FormLabel>Password</FormLabel>
+            <InputGroup>
+              <InputLeftElement pointerEvents="none">
+                <FaLock color="grey" />
+              </InputLeftElement>
+              <Input
+                borderBottom="1px solid grey"
+                mb={4}
+                type="password"
+                placeholder="Type your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </InputGroup>
+            {passwordError && (
+              <Text color="red.500" fontSize="sm" textAlign='left'>
+                {passwordError}
+              </Text>
+            )}
+            <Flex mb={4} justifyContent="flex-end">
+              <Link color="green.700" fontSize="sm">
+                Forgot password?
+              </Link>
+            </Flex>
+
+            <Button
+              colorScheme="green"
+              w="full"
+              h="40px"
+              type="submit"
+              isLoading={loading}
+              loadingText="Logging in"
+              isDisabled={loading}
+            >
+              Login
+            </Button>
+          </FormControl>
+        </form>
+      </Box>
+    </Flex>
   );
 }
 
