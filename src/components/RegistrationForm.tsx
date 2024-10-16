@@ -9,12 +9,13 @@ import {
   Button,
   InputGroup,
   FormHelperText,
-    Image,
   Textarea,
 } from "@chakra-ui/react";
-import { useRef, useState } from "react";
+import { useState } from "react";
+import CustomFileUpload from "./ImageUpload";
 
 function RegistrationForm() {
+
   const [step, setStep] = useState(1);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -27,15 +28,30 @@ function RegistrationForm() {
   const [username, setUsername] = useState("");
   const handleNext = () => setStep(step + 1);
   const handleBack = () => setStep(step - 1);
-  const handleFileChange = (e:React.ChangeEvent<HTMLInputElement>, setFile:React.Dispatch<React.SetStateAction<string | null>>) => {
-    const file = e.target.files?.[0];
+  // const handleFileChange = (e:React.ChangeEvent<HTMLInputElement>, setFile:React.Dispatch<React.SetStateAction<string | null>>) => {
+  //   const file = e.target.files?.[0];
+  //   if (file) {
+  //     setFile(URL.createObjectURL(file));
+  //   }
+  // };
+
+  const handleProfilePictureChange = (file: File | null) => {
     if (file) {
-      setFile(URL.createObjectURL(file));
+      const imageUrl = URL.createObjectURL(file);
+      setProfilePicture(imageUrl);
+    } else {
+      setProfilePicture(null);
+    }
+  };
+  const handleCoverPictureChange = (file: File | null) => {
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setCoverPicture(imageUrl);
+    } else {
+      setCoverPicture(null);
     }
   };
 
-  const profileInputRef = useRef<HTMLInputElement | null>(null);
-  const coverInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleSubmit = () => {
     console.log({
@@ -85,7 +101,7 @@ function RegistrationForm() {
                   onChange={(e) => setLastName(e.target.value)}
                 />
                 <FormLabel mt={4}>Username</FormLabel>
-                <Input
+                <Input isRequired
                   placeholder="Enter your username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -112,14 +128,14 @@ function RegistrationForm() {
               </Text>
               <FormControl>
                 <FormLabel>Email</FormLabel>
-                <Input
+                <Input isRequired
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
                 <FormLabel mt={4}>Password</FormLabel>
                 <InputGroup>
-                  <Input
+                  <Input isRequired
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -127,7 +143,7 @@ function RegistrationForm() {
                 </InputGroup>
                 <FormLabel mt={4}>Confirm Password</FormLabel>
                 <InputGroup>
-                  <Input
+                  <Input isRequired
                     placeholder="Confirm your password"
                     type="password"
                     value={confirmPassword}
@@ -164,44 +180,14 @@ function RegistrationForm() {
                 Additional Information
               </Text>
               <FormControl>
-                <FormLabel>Profile Picture</FormLabel>
-                <Button
-                  onClick={() => profileInputRef.current?.click()}
-                  colorScheme="green"
-                  variant="outline"
-                  size="sm"
-                >
-                  Upload Profile Picture
-                </Button>
-                <Input
-                  type="file"
-                  ref={profileInputRef}
-                  accept="image/*"
-                  onChange={(e) => handleFileChange(e, setProfilePicture)}
-                  display="none"
-                />
-                {profilePicture && (
+                <CustomFileUpload label="Profile Picture" onFileChange={handleProfilePictureChange} />
+                {/* {profilePicture && (
                   <Image maxH="20px"src={profilePicture} alt="profile picture" mt={2} />
-                )}
-                <FormLabel mt={4}>Cover Picture</FormLabel>
-                <Button
-                  onClick={() => coverInputRef.current?.click()}
-                  colorScheme="green"
-                  variant="outline"
-                  size="sm"
-                >
-                  Upload Cover Picture
-                </Button>
-                <Input
-                  type="file"
-                  ref={coverInputRef}
-                  accept="image/*"
-                  onChange={(e) => handleFileChange(e, setCoverPicture)}
-                  display="none"
-                />
-                {coverPicture && (
+                )} */}
+                <CustomFileUpload label="Cover Picture" onFileChange={handleCoverPictureChange} />
+                {/* {coverPicture && (
                   <Image maxH="20px" src={coverPicture} alt="Cover Picture" mt={2} />
-                )}
+                )} */}
                 <FormLabel mt={4}>Profile Bio</FormLabel>
                 <Textarea
                   placeholder="Tell us about yourself"
