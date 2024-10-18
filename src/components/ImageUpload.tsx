@@ -1,3 +1,4 @@
+import { DeleteIcon } from "@chakra-ui/icons";
 import { Box, FormControl, FormLabel, Input, Button, Text } from "@chakra-ui/react";
 import { useState } from "react";
 
@@ -8,7 +9,7 @@ interface CustomFileUploadProps {
   
 
 const CustomFileUpload: React.FC<CustomFileUploadProps> = ({ label, onFileChange }) => {
-  const [fileName, setFileName] = useState("");
+  const [fileName, setFileName] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -17,7 +18,10 @@ const CustomFileUpload: React.FC<CustomFileUploadProps> = ({ label, onFileChange
       onFileChange(file); // Pass the file to the parent component
     }
   };
-
+  const handleClearFile = () => {
+    setFileName(null); // Clear the local state
+    onFileChange(null); // Notify the parent component to clear the file
+  };
   return (
     <FormControl>
       <FormLabel>{label}</FormLabel>
@@ -45,12 +49,12 @@ const CustomFileUpload: React.FC<CustomFileUploadProps> = ({ label, onFileChange
           onChange={handleFileChange}
         />
         <Text>{fileName || "Drag and drop here to upload, or click to select a file"}</Text>
-      </Box>
-      {fileName && (
-        <Button mt={2} onClick={() => setFileName("")}>
-          Clear
+        {fileName && (
+        <Button leftIcon={<DeleteIcon/>} mt={2} onClick={handleClearFile}>
         </Button>
       )}
+      </Box>
+      
     </FormControl>
   );
 };

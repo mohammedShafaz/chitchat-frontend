@@ -10,20 +10,21 @@ import {
   InputGroup,
   FormHelperText,
   Textarea,
+  Image,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import CustomFileUpload from "./ImageUpload";
+import NavigationButtons from "./NavigationButtons";
 
 function RegistrationForm() {
-
   const [step, setStep] = useState(1);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [profilePicture, setProfilePicture] = useState<string | null>(null);;
-  const [coverPicture, setCoverPicture] = useState<string | null>(null);;
+  const [profilePicture, setProfilePicture] = useState<string | null>(null);
+  const [coverPicture, setCoverPicture] = useState<string | null>(null);
   const [profileBio, setProfileBio] = useState("");
   const [username, setUsername] = useState("");
   const handleNext = () => setStep(step + 1);
@@ -51,7 +52,6 @@ function RegistrationForm() {
       setCoverPicture(null);
     }
   };
-
 
   const handleSubmit = () => {
     console.log({
@@ -101,7 +101,8 @@ function RegistrationForm() {
                   onChange={(e) => setLastName(e.target.value)}
                 />
                 <FormLabel mt={4}>Username</FormLabel>
-                <Input isRequired
+                <Input
+                  isRequired
                   placeholder="Enter your username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -128,14 +129,16 @@ function RegistrationForm() {
               </Text>
               <FormControl>
                 <FormLabel>Email</FormLabel>
-                <Input isRequired
+                <Input
+                  isRequired
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
                 <FormLabel mt={4}>Password</FormLabel>
                 <InputGroup>
-                  <Input isRequired
+                  <Input
+                    isRequired
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -143,7 +146,8 @@ function RegistrationForm() {
                 </InputGroup>
                 <FormLabel mt={4}>Confirm Password</FormLabel>
                 <InputGroup>
-                  <Input isRequired
+                  <Input
+                    isRequired
                     placeholder="Confirm your password"
                     type="password"
                     value={confirmPassword}
@@ -152,42 +156,68 @@ function RegistrationForm() {
                 </InputGroup>
                 <FormHelperText>Ensure email is unique.</FormHelperText>
               </FormControl>
-              <Flex justify="space-between" mt={4}>
-                <Button
-                  mt={4}
-                  rightIcon={<ArrowBackIcon boxSize={5} />}
-                  colorScheme="green"
-                  variant="solid"
-                  borderRadius="27px"
-                  bgGradient="linear(to-r, green.400, green.500)"
-                  onClick={handleBack}
-                ></Button>
-                <Button
-                  mt={4}
-                  rightIcon={<ArrowForwardIcon boxSize={5} />}
-                  colorScheme="green"
-                  variant="solid"
-                  borderRadius="27px"
-                  bgGradient="linear(to-r, green.400, green.500)"
-                  onClick={handleNext}
-                ></Button>
-              </Flex>
+              <NavigationButtons
+                onBack={handleBack}
+                onNext={handleNext}
+              ></NavigationButtons>
             </>
           )}
           {step === 3 && (
             <>
               <Text fontSize="xl" mb={4}>
+                Add your profile picture
+              </Text>
+              <FormControl>
+                <CustomFileUpload
+                  label="Profile Picture"
+                  onFileChange={handleProfilePictureChange}
+                />
+                {profilePicture && (
+                  <Box justifyContent="center">
+                    {" "}
+                    <Image
+                      maxH="100px"
+                      src={profilePicture}
+                      alt="profile picture"
+                      mt={2}
+                    />
+                  </Box>
+                )}
+              </FormControl>
+              <NavigationButtons
+                onBack={handleBack}
+                onNext={handleNext}
+              ></NavigationButtons>
+            </>
+          )}
+          {step === 4 && (
+            <>
+              <Text fontSize="xl" mb={4}>
+                Add your cover picture
+              </Text>
+              <FormControl>
+                <CustomFileUpload
+                  label="Cover Picture"
+                  onFileChange={handleCoverPictureChange}
+                />
+                {coverPicture && (
+                  <Image
+                    maxH="100px"
+                    src={coverPicture}
+                    alt="Cover Picture"
+                    mt={2}
+                  />
+                )}
+              </FormControl>
+              <NavigationButtons onBack={handleBack} onNext={handleNext}></NavigationButtons>
+            </>
+          )}
+          {step === 5 && (
+            <>
+              <Text fontSize="xl" mb={4}>
                 Additional Information
               </Text>
               <FormControl>
-                <CustomFileUpload label="Profile Picture" onFileChange={handleProfilePictureChange} />
-                {/* {profilePicture && (
-                  <Image maxH="20px"src={profilePicture} alt="profile picture" mt={2} />
-                )} */}
-                <CustomFileUpload label="Cover Picture" onFileChange={handleCoverPictureChange} />
-                {/* {coverPicture && (
-                  <Image maxH="20px" src={coverPicture} alt="Cover Picture" mt={2} />
-                )} */}
                 <FormLabel mt={4}>Profile Bio</FormLabel>
                 <Textarea
                   placeholder="Tell us about yourself"
