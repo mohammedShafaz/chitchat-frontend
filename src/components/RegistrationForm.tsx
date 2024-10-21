@@ -1,20 +1,15 @@
-import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 import {
   Box,
   Flex,
   Text,
-  FormControl,
-  FormLabel,
-  Input,
-  Button,
-  InputGroup,
-  FormHelperText,
-  Textarea,
-  Image,
+
 } from "@chakra-ui/react";
 import { useState } from "react";
-import CustomFileUpload from "./ImageUpload";
-import NavigationButtons from "./NavigationButtons";
+import BasicInfoRegistration from "./BasicInfoRegistration";
+import AccountDetails from "./AccountDetails";
+import ProfilePictureForm from "./ProfilePictureForm";
+import CoverPictureForm from "./CoverPictureForm";
+import AdditionalInfo from "./AdditionalInfo";
 
 function RegistrationForm() {
   const [step, setStep] = useState(1);
@@ -83,163 +78,52 @@ function RegistrationForm() {
             Sign Up
           </Text>
           {step === 1 && (
-            <>
-              <Text fontSize="xl" mb={4}>
-                Basic information
-              </Text>
-              <FormControl>
-                <FormLabel>First Name</FormLabel>
-                <Input
-                  placeholder="Enter your first name"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                ></Input>
-                <FormLabel mt={4}>Last Name</FormLabel>
-                <Input
-                  placeholder="Enter your last name"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                />
-                <FormLabel mt={4}>Username</FormLabel>
-                <Input
-                  isRequired
-                  placeholder="Enter your username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                />
-                <FormHelperText>Ensure username is unique.</FormHelperText>
-              </FormControl>
-              <Box float="right" mt={4}>
-                <Button
-                  mt={4}
-                  rightIcon={<ArrowForwardIcon boxSize={5} />}
-                  colorScheme="green"
-                  variant="solid"
-                  borderRadius="27px"
-                  bgGradient="linear(to-r, green.400, green.500)"
-                  onClick={handleNext}
-                ></Button>
-              </Box>
-            </>
+            <BasicInfoRegistration
+            firstName={firstName}
+            lastName={lastName}
+            username={username}
+            setUsername={setUsername}
+            setFirstName={setFirstName}
+            setLastName={setLastName}
+            onNext={handleNext}
+            />
           )}
           {step === 2 && (
-            <>
-              <Text fontSize="xl" mb={4}>
-                Account Details
-              </Text>
-              <FormControl>
-                <FormLabel>Email</FormLabel>
-                <Input
-                  isRequired
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                <FormLabel mt={4}>Password</FormLabel>
-                <InputGroup>
-                  <Input
-                    isRequired
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                </InputGroup>
-                <FormLabel mt={4}>Confirm Password</FormLabel>
-                <InputGroup>
-                  <Input
-                    isRequired
-                    placeholder="Confirm your password"
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                  />
-                </InputGroup>
-                <FormHelperText>Ensure email is unique.</FormHelperText>
-              </FormControl>
-              <NavigationButtons
-                onBack={handleBack}
-                onNext={handleNext}
-              ></NavigationButtons>
-            </>
+            <AccountDetails
+            email={email}
+            password={password}
+            confirmPassword={confirmPassword}
+            setEmail={setEmail}
+            setPassword={setPassword}
+            setConfirmPassword={setConfirmPassword}
+            onBack={handleBack}
+            onNext={handleNext}
+            />
           )}
           {step === 3 && (
-            <>
-              <Text fontSize="xl" mb={4}>
-                Add your profile picture
-              </Text>
-              <FormControl>
-                <CustomFileUpload
-                  label="Profile Picture"
-                  onFileChange={handleProfilePictureChange}
-                />
-                {profilePicture && (
-                  <Box justifyContent="center">
-                    {" "}
-                    <Image
-                      maxH="100px"
-                      src={profilePicture}
-                      alt="profile picture"
-                      mt={2}
-                    />
-                  </Box>
-                )}
-              </FormControl>
-              <NavigationButtons
-                onBack={handleBack}
-                onNext={handleNext}
-              ></NavigationButtons>
-            </>
+           <ProfilePictureForm
+           profilePicture={profilePicture}
+           onFileChange={handleProfilePictureChange}
+           onNext={handleNext}
+           onBack={handleBack}
+           />
           )}
           {step === 4 && (
-            <>
-              <Text fontSize="xl" mb={4}>
-                Add your cover picture
-              </Text>
-              <FormControl>
-                <CustomFileUpload
-                  label="Cover Picture"
-                  onFileChange={handleCoverPictureChange}
-                />
-                {coverPicture && (
-                  <Image
-                    maxH="100px"
-                    src={coverPicture}
-                    alt="Cover Picture"
-                    mt={2}
-                  />
-                )}
-              </FormControl>
-              <NavigationButtons onBack={handleBack} onNext={handleNext}></NavigationButtons>
-            </>
+            <CoverPictureForm
+            coverPicture={coverPicture}
+            onFileChange={handleCoverPictureChange}
+            onNext={handleNext}
+            onBack={handleBack}
+            />
           )}
           {step === 5 && (
-            <>
-              <Text fontSize="xl" mb={4}>
-                Additional Information
-              </Text>
-              <FormControl>
-                <FormLabel mt={4}>Profile Bio</FormLabel>
-                <Textarea
-                  placeholder="Tell us about yourself"
-                  value={profileBio}
-                  onChange={(e) => setProfileBio(e.target.value)}
-                />
-              </FormControl>
-              <Flex justify="space-between" mt={4}>
-                <Button
-                  mt={4}
-                  rightIcon={<ArrowBackIcon boxSize={5} />}
-                  colorScheme="green"
-                  variant="solid"
-                  borderRadius="27px"
-                  bgGradient="linear(to-r, green.400, green.500)"
-                  onClick={handleBack}
-                ></Button>
-                <Button mt={4} colorScheme="green" onClick={handleSubmit}>
-                  Submit
-                </Button>
-              </Flex>
-            </>
+            
+            <AdditionalInfo
+            profileBio={profileBio}
+            onProfileBioChange={setProfileBio}
+            onBack={handleBack}
+            onSubmit={handleSubmit}
+            />
           )}
         </Box>
       </Flex>
