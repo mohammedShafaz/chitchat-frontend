@@ -19,7 +19,9 @@ function RegistrationForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
+  const [profilePictureName, setProfilePictureName] = useState<string | null>(null);
   const [coverPicture, setCoverPicture] = useState<string | null>(null);
+  const [coverPictureName, setCoverPictureName] = useState<string | null>(null);
   const [profileBio, setProfileBio] = useState("");
   const [username, setUsername] = useState("");
   const handleNext = () => setStep(step + 1);
@@ -35,16 +37,20 @@ function RegistrationForm() {
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setProfilePicture(imageUrl);
+      setProfilePictureName(file.name);
     } else {
       setProfilePicture(null);
+      setProfilePictureName(null);
     }
   };
   const handleCoverPictureChange = (file: File | null) => {
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setCoverPicture(imageUrl);
+      setCoverPictureName(file.name);
     } else {
       setCoverPicture(null);
+      setCoverPictureName(null);
     }
   };
 
@@ -103,6 +109,7 @@ function RegistrationForm() {
           {step === 3 && (
            <ProfilePictureForm
            profilePicture={profilePicture}
+           profilePictureName={profilePictureName}
            onFileChange={handleProfilePictureChange}
            onNext={handleNext}
            onBack={handleBack}
@@ -111,6 +118,7 @@ function RegistrationForm() {
           {step === 4 && (
             <CoverPictureForm
             coverPicture={coverPicture}
+            coverPictureName={coverPictureName}
             onFileChange={handleCoverPictureChange}
             onNext={handleNext}
             onBack={handleBack}

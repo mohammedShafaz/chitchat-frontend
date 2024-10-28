@@ -5,11 +5,13 @@ import NavigationButtons from "./NavigationButtons";
 
 interface CoverPictureProps {
   coverPicture: string | null;
+  coverPictureName:string|null;
   onFileChange: (file: File | null) => void;
   onBack: () => void;
   onNext: () => void;
 }
 const CoverPictureForm: React.FC<CoverPictureProps> = ({
+  coverPictureName,
   coverPicture,
   onFileChange,
   onBack,
@@ -21,7 +23,7 @@ const CoverPictureForm: React.FC<CoverPictureProps> = ({
         Add your cover picture
       </Text>
       <FormControl>
-        <CustomFileUpload label="Cover Picture" onFileChange={onFileChange} />
+        <CustomFileUpload label="Cover Picture" onFileChange={onFileChange} fileName={coverPictureName} />
         {coverPicture && (
           <Image maxH="100px" src={coverPicture} alt="Cover Picture" mt={2} />
         )}
