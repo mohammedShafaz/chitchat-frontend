@@ -1,4 +1,4 @@
-import { FormControl, Text, Image } from "@chakra-ui/react";
+import { FormControl, Text, Image, Flex } from "@chakra-ui/react";
 import React from "react";
 import CustomFileUpload from "./ImageUpload";
 import NavigationButtons from "./NavigationButtons";
@@ -23,10 +23,19 @@ const CoverPictureForm: React.FC<CoverPictureProps> = ({
         Add your cover picture
       </Text>
       <FormControl>
-        <CustomFileUpload label="Cover Picture" onFileChange={onFileChange} fileName={coverPictureName} />
-        {coverPicture && (
-          <Image maxH="100px" src={coverPicture} alt="Cover Picture" mt={2} />
+      {coverPicture && (
+           <Flex justifyContent="center" >
+           {" "}
+           <Image
+             maxH="100px"
+             src={coverPicture}
+             alt="profile picture"
+             mt={2}
+             borderRadius={10}
+           />
+         </Flex>
         )}
+        <CustomFileUpload label="Cover Picture" onFileChange={onFileChange} fileName={coverPictureName} />
       </FormControl>
       <NavigationButtons
         onBack={onBack}
