@@ -3,7 +3,7 @@ import React from "react";
 import CustomFileUpload from "./ImageUpload";
 import NavigationButtons from "./NavigationButtons";
 interface Step3Props {
-  profilePicture: string | null;
+  profilePicture: File | null;
   profilePictureName: string|null;
   onFileChange: (file: File | null) => void;
   onBack: () => void;
@@ -27,7 +27,7 @@ const ProfilePictureForm: React.FC<Step3Props> = ({
             {" "}
             <Image
               maxH="100px"
-              src={profilePicture}
+              src={URL.createObjectURL(profilePicture)}
               alt="profile picture"
               mt={2}
               borderRadius={10}

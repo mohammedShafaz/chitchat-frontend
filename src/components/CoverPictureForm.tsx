@@ -4,7 +4,7 @@ import CustomFileUpload from "./ImageUpload";
 import NavigationButtons from "./NavigationButtons";
 
 interface CoverPictureProps {
-  coverPicture: string | null;
+  coverPicture: File | null;
   coverPictureName:string|null;
   onFileChange: (file: File | null) => void;
   onBack: () => void;
@@ -28,7 +28,7 @@ const CoverPictureForm: React.FC<CoverPictureProps> = ({
            {" "}
            <Image
              maxH="100px"
-             src={coverPicture}
+             src={URL.createObjectURL(coverPicture)}
              alt="profile picture"
              mt={2}
              borderRadius={10}

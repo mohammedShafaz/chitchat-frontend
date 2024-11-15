@@ -3,11 +3,11 @@ import {
   FormControl,
   FormLabel,
   Input,
-  FormHelperText,
   Button,
   Text,
   Flex,
   FormErrorMessage,
+  Spinner,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { findUser } from "../api/users";
@@ -52,22 +52,25 @@ const BasicInfoRegistration: React.FC<Step1Props> = ({
     if (username) {
       const checkUsername = async () => {
         setIsChecking(true);
+        
         try {
           const response = await findUser({ email: username });
+          console.log("responseeee",response);
           if (response.status === 200) {
             setUsernameError("");
           }
         } catch (error: unknown) {
-          if (axios.isAxiosError(error) && error.response?.status === 400) {
+          if (axios.isAxiosError(error) && error.response?.status === 409) {
             setUsernameError("Username is already taken.");
           } else {
+            console.error("Error checking username:", error);
             setUsernameError("Error checking username.");
           }
         } finally {
           setIsChecking(false);
         }
       };
-      const timeoutId = setTimeout(checkUsername, 500); // Debounce API call
+      const timeoutId = setTimeout(checkUsername, 3000); // Debounce API call
       return () => clearTimeout(timeoutId);
     }
   }, [username]);
@@ -82,34 +85,51 @@ const BasicInfoRegistration: React.FC<Step1Props> = ({
       <Text fontSize="xl" mb={4}>
         Basic information
       </Text>
-      <FormControl isRequired isInvalid={!firstName}>
+      <FormControl isRequired isInvalid={!!errors.firstName}>
         <FormLabel>First Name</FormLabel>
         <Input
-          isRequired={true}
           placeholder="Enter your first name"
           value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
+          onChange={(e) => {
+            setFirstName(e.target.value);
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              firstName: e.target.value ? "" : "First Name is required",
+            }));
+          }}
         />
         <FormErrorMessage>{errors.firstName}</FormErrorMessage>
       </FormControl>
-      <FormControl isRequired isInvalid={!lastName}>
+      <FormControl isRequired isInvalid={!!errors.lastName}>
         <FormLabel mt={4}>Last Name</FormLabel>
         <Input
           placeholder="Enter your last name"
           value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
+          onChange={(e) => {
+            setLastName(e.target.value);
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              lastName: e.target.value ? "" : "Last Name is required",
+            }));
+          }}
         />
         <FormErrorMessage>{errors.lastName}</FormErrorMessage>
       </FormControl>
-      <FormControl isRequired isInvalid={!username}>
+      <FormControl isRequired isInvalid={!!errors.username || !!usernameError}>
         <FormLabel mt={4}>Username</FormLabel>
         <Input
           placeholder="Enter your username"
           value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          onChange={(e) => {
+            setUsername(e.target.value);
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              username: e.target.value ? "" : "Username is required",
+            }));
+          }}
         />
-        <FormErrorMessage>{errors.username || usernameError}</FormErrorMessage>
-        <FormHelperText>Ensure username is unique.</FormHelperText>
+        {isChecking && <Spinner size="sm" />}
+        <FormErrorMessage>{usernameError || errors.username}</FormErrorMessage>
       </FormControl>
       <Flex float="right">
         <Button
@@ -120,7 +140,7 @@ const BasicInfoRegistration: React.FC<Step1Props> = ({
           borderRadius="27px"
           bgGradient="linear(to-r, green.400, green.500)"
           onClick={handleNext}
-          isDisabled={isChecking}
+          isDisabled={isChecking || !!usernameError}
         ></Button>
       </Flex>
     </>
