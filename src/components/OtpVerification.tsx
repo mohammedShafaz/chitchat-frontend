@@ -1,21 +1,54 @@
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, Input, ModalFooter, Button, Text, ModalCloseButton } from "@chakra-ui/react";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  Input,
+  ModalFooter,
+  Button,
+  Text,
+  ModalCloseButton,
+} from "@chakra-ui/react";
 import React, { useState } from "react";
+import { verifyOtp } from "../api/users";
+import { useNavigate } from "react-router-dom";
 interface OTPModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onVerify: (otp: string) => void;
-  setOtp: React.Dispatch<React.SetStateAction<string>>;
+  email: string;
 }
-const OtpVerification: React.FC<OTPModalProps> = ({ isOpen, onClose, onVerify, setOtp }) => {
-  const [otp, setLocalOtp] = useState("");
-  
+const OtpVerification: React.FC<OTPModalProps> = ({
+  email,
+}) => {
+  const [otp, setOtp] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [verificationMessage, setVerificationMessage] = useState<string | null>(
+    null
+  );
+  const navigate = useNavigate();
+
+
   const handleOtpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLocalOtp(e.target.value);
-    setOtp(e.target.value); 
+    setOtp(e.target.value);
   };
 
+  const handleVerifyClick = async () => {
+    setLoading(true); //
+    try {
+      const response= await verifyOtp({ email, otp });
+      console.log("OTP response", response.data);
+      
+      setVerificationMessage(response.data.message)
+      navigate('/LandingPage')
+    } catch (error) {
+      console.error(error);
+      setVerificationMessage("Failed to verify OTP. Please try again.");
+    } finally {
+      setLoading(false); // Stop loading
+    }
+  };
+  
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={true} onClose={() => {}}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>OTP Verification</ModalHeader>
@@ -28,9 +61,15 @@ const OtpVerification: React.FC<OTPModalProps> = ({ isOpen, onClose, onVerify, s
           />
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme="green" onClick={onVerify}>
-            Verify OTP
+          <Button colorScheme="green" onClick={handleVerifyClick} isLoading={loading}>
+            Verify
           </Button>
+          {verificationMessage && (
+            <Text mt={2} color={verificationMessage.includes("successfully") ? "green.500" : "red.500"}>
+              {verificationMessage}
+            </Text>
+          )}
+
         </ModalFooter>
       </ModalContent>
     </Modal>
@@ -38,4 +77,3 @@ const OtpVerification: React.FC<OTPModalProps> = ({ isOpen, onClose, onVerify, s
 };
 
 export default OtpVerification;
-  

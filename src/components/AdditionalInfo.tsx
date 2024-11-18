@@ -9,18 +9,22 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-interface AdditionalInfo {
+interface AdditionalInfoProp {
   profileBio: string;
   onProfileBioChange: (value: string) => void;
   onBack: () => void;
   onSubmit: () => void;
+  loading: boolean;
+  submissionMessage: string | null;
 }
 
-const AdditionalInfo: React.FC<AdditionalInfo> = ({
+const AdditionalInfo: React.FC<AdditionalInfoProp> = ({
   profileBio,
   onProfileBioChange,
   onBack,
+  loading,
   onSubmit,
+  submissionMessage,
 }) => {
   return (
     <>
@@ -45,9 +49,27 @@ const AdditionalInfo: React.FC<AdditionalInfo> = ({
           bgGradient="linear(to-r, green.400, green.500)"
           onClick={onBack}
         ></Button>
-        <Button mt={4} colorScheme="green" onClick={onSubmit}>
+        <Button
+          mt={4}
+          colorScheme="green"
+          onClick={onSubmit}
+          isLoading={loading}
+          isDisabled={loading}
+        >
           Submit
         </Button>
+        {submissionMessage && (
+          <Text
+            mt={2}
+            color={
+              submissionMessage.includes("successfully")
+                ? "green.500"
+                : "red.500"
+            }
+          >
+            {submissionMessage}
+          </Text>
+        )}
       </Flex>
     </>
   );

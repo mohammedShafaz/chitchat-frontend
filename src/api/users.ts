@@ -29,14 +29,14 @@ export const createUser = async (body: FormData): Promise<AxiosResponse> => {
 
     }
 };
-export const verifyOtp = async ({email, otp}:{ email: string, otp: string }): Promise<AxiosResponse> => {
+export const verifyOtp = async ({ email, otp }: { email: string, otp: string }): Promise<AxiosResponse> => {
     try {
-        const response = await axiosInstance.post('/user//verify-otp', { email, otp }, {
+        const response = await axiosInstance.post('/user/verify-otp', { email, otp }, {
             headers: {
                 'Content-Type': 'application/json'
             }
         });
-        return response.data;
+        return response;
     } catch (error) {
         console.error("Error verifying otp", error);
         throw error;

@@ -1,13 +1,13 @@
-import { Box, Flex, Text, useToast } from "@chakra-ui/react";
-import { useState } from "react";
+import { Box, Flex, Text } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import BasicInfoRegistration from "./BasicInfoRegistration";
 import AccountDetails from "./AccountDetails";
 import ProfilePictureForm from "./ProfilePictureForm";
 import CoverPictureForm from "./CoverPictureForm";
 import AdditionalInfo from "./AdditionalInfo";
-import { createUser, verifyOtp } from "../api/users";
-import { useNavigate } from "react-router-dom";
+import { createUser } from "../api/users";
 import OtpVerification from "./OtpVerification";
+import axios from "axios";
 
 function RegistrationForm() {
   const [step, setStep] = useState(1);
@@ -26,12 +26,10 @@ function RegistrationForm() {
   const [username, setUsername] = useState("");
   const handleNext = () => setStep(step + 1);
   const handleBack = () => setStep(step - 1);
-  const [submissionMessage, setSubmissionMessage] = useState("");
+  const [submissionMessage, setSubmissionMessage] = useState<string|null>(null);
   const [loading, setLoading] = useState(false);
   const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
-  const [otp, setOtp] = useState("");
-  const toast = useToast();
-  const navigate= useNavigate()
+
   const handleProfilePictureChange = (file: File | null) => {
     setProfilePicture(file);
     setProfilePictureName(file ? file.name : null);
@@ -49,18 +47,12 @@ function RegistrationForm() {
     formData.append("email", email);
     formData.append("username", username);
     formData.append("password", password);
-    if (profilePictureName && profilePicture) {
-      formData.append(
-        "profilePicture",
-        new File([profilePicture], profilePictureName)
-      );
+    if (profilePicture) {
+      formData.append("profilePicture", profilePicture);
     }
 
-    if (coverPictureName && coverPicture) {
-      formData.append(
-        "coverPicture",
-        new File([coverPicture], coverPictureName)
-      );
+    if (coverPicture) {
+      formData.append("coverPicture", coverPicture);
     }
     if (profileBio !== null && profileBio !== undefined) {
       formData.append("profileBio", profileBio);
@@ -75,109 +67,100 @@ function RegistrationForm() {
       setStep(6);
     } catch (error) {
       console.error("Error user registration", error);
-      setSubmissionMessage("Something went wrong please try again later!");
+      if (axios.isAxiosError(error)) {
+        const errorMessage =
+          error.response?.data?.message ||
+          "Something went wrong! Please try again later.";
+        setSubmissionMessage(errorMessage);
+      } else {
+        setSubmissionMessage("Something went wrong! Please try again later.");
+      }
     } finally {
       setLoading(false);
     }
   };
-
-  const handleOtpVerification = async () => {
-    try {
-      const response = await verifyOtp({ email, otp });
-      toast({
-        title: "Verification successful!",
-        description: "Your email has been verified.",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
-      setIsOtpModalOpen(false);
-      navigate("/LandingPage")
-    } catch (error) {
-      console.error(error);
-      toast({
-        title: "Verification failed",
-        description: "Invalid or expired OTP. Please try again.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
+  useEffect(() => {
+    if (submissionMessage) {
+      const timer = setTimeout(() => {
+        setSubmissionMessage(null); 
+      }, 3000);
+      return () => clearTimeout(timer); 
     }
-  };
+  }, [submissionMessage]);
   return (
     <>
-      <Flex justifyContent="center">
-        <Box
-          color="black"
-          bgColor="white"
-          w={{ base: "100%", sm: "80%", md: "60%", lg: "40%" }}
-          minW="450px"
-          minH="500px"
-          p={6}
-          borderRadius={7}
-          boxShadow="dark-lg"
-          border="none"
-        >
-          <Text fontSize="4xl" as="h1" textAlign="center">
-            Sign Up
-          </Text>
-          {step === 1 && (
-            <BasicInfoRegistration
-              firstName={firstName}
-              lastName={lastName}
-              username={username}
-              setUsername={setUsername}
-              setFirstName={setFirstName}
-              setLastName={setLastName}
-              onNext={handleNext}
-            />
-          )}
-          {step === 2 && (
-            <AccountDetails
-              email={email}
-              password={password}
-              confirmPassword={confirmPassword}
-              setEmail={setEmail}
-              setPassword={setPassword}
-              setConfirmPassword={setConfirmPassword}
-              onBack={handleBack}
-              onNext={handleNext}
-            />
-          )}
-          {step === 3 && (
-            <ProfilePictureForm
-              profilePicture={profilePicture}
-              profilePictureName={profilePictureName}
-              onFileChange={handleProfilePictureChange}
-              onNext={handleNext}
-              onBack={handleBack}
-            />
-          )}
-          {step === 4 && (
-            <CoverPictureForm
-              coverPicture={coverPicture}
-              coverPictureName={coverPictureName}
-              onFileChange={handleCoverPictureChange}
-              onNext={handleNext}
-              onBack={handleBack}
-            />
-          )}
-          {step === 5 && (
-            <AdditionalInfo
-              profileBio={profileBio}
-              onProfileBioChange={setProfileBio}
-              onBack={handleBack}
-              onSubmit={handleSubmit}
-            />
-          )}
-        </Box>
-      </Flex>
-      <OtpVerification
-        isOpen={isOtpModalOpen}
-        onClose={() => setIsOtpModalOpen(false)}
-        onVerify={handleOtpVerification}
-        setOtp={setOtp}
-      />
+      {isOtpModalOpen ? (
+        <OtpVerification email={email} />
+      ) : (
+        <Flex justifyContent="center">
+          <Box
+            color="black"
+            bgColor="white"
+            w={{ base: "100%", sm: "80%", md: "60%", lg: "40%" }}
+            minW="450px"
+            minH="500px"
+            p={6}
+            borderRadius={7}
+            boxShadow="dark-lg"
+            border="none"
+          >
+            <Text fontSize="4xl" as="h1" textAlign="center">
+              Sign Up
+            </Text>
+            {step === 1 && (
+              <BasicInfoRegistration
+                firstName={firstName}
+                lastName={lastName}
+                username={username}
+                setUsername={setUsername}
+                setFirstName={setFirstName}
+                setLastName={setLastName}
+                onNext={handleNext}
+              />
+            )}
+            {step === 2 && (
+              <AccountDetails
+                email={email}
+                password={password}
+                confirmPassword={confirmPassword}
+                setEmail={setEmail}
+                setPassword={setPassword}
+                setConfirmPassword={setConfirmPassword}
+                onBack={handleBack}
+                onNext={handleNext}
+              />
+            )}
+            {step === 3 && (
+              <ProfilePictureForm
+                profilePicture={profilePicture}
+                profilePictureName={profilePictureName}
+                onFileChange={handleProfilePictureChange}
+                onNext={handleNext}
+                onBack={handleBack}
+              />
+            )}
+            {step === 4 && (
+              <CoverPictureForm
+                coverPicture={coverPicture}
+                coverPictureName={coverPictureName}
+                onFileChange={handleCoverPictureChange}
+                onNext={handleNext}
+                onBack={handleBack}
+              />
+            )}
+            {step === 5 && (
+              <AdditionalInfo
+                profileBio={profileBio}
+                onProfileBioChange={setProfileBio}
+                onBack={handleBack}
+                onSubmit={handleSubmit}
+                loading={loading}
+                submissionMessage={submissionMessage}
+              />
+            )}
+          </Box>
+        </Flex>
+      )}
     </>
   );
 }
