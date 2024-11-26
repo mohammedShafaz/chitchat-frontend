@@ -1,5 +1,5 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import BasicInfoRegistration from "./BasicInfoRegistration";
 import AccountDetails from "./AccountDetails";
 import ProfilePictureForm from "./ProfilePictureForm";
@@ -63,8 +63,9 @@ function RegistrationForm() {
     try {
       const response = await createUser(formData);
       setSubmissionMessage(response.data.message);
-      setIsOtpModalOpen(true);
-      setStep(6);
+      setTimeout(() => {
+        setIsOtpModalOpen(true);
+      }, 4000);
     } catch (error) {
       console.error("Error user registration", error);
       if (axios.isAxiosError(error)) {
@@ -79,14 +80,7 @@ function RegistrationForm() {
       setLoading(false);
     }
   };
-  useEffect(() => {
-    if (submissionMessage) {
-      const timer = setTimeout(() => {
-        setSubmissionMessage(null); 
-      }, 3000);
-      return () => clearTimeout(timer); 
-    }
-  }, [submissionMessage]);
+
   return (
     <>
       {isOtpModalOpen ? (
@@ -156,6 +150,7 @@ function RegistrationForm() {
                 onSubmit={handleSubmit}
                 loading={loading}
                 submissionMessage={submissionMessage}
+                setSubmissionMessage={setSubmissionMessage}
               />
             )}
           </Box>

@@ -10,6 +10,7 @@ import {
   InputGroup,
   InputLeftElement,
   useToast,
+  InputRightElement,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { FaLock, FaUser } from "react-icons/fa";
@@ -18,6 +19,7 @@ import { login as loginApi } from "../api/auth";
 import { login } from "../store/authSlice";
 import { useDispatch } from "react-redux";
 import axios from "axios";
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
@@ -76,10 +78,15 @@ function LoginForm() {
           ? error.response.data.message || "Invalid credentials"
           : "Something went wrong. Please try again later.";
       setPasswordError(errorMessage);
-    
     } finally {
       setLoading(false);
     }
+  };
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
   };
   return (
     <Flex justifyContent="center">
@@ -91,7 +98,7 @@ function LoginForm() {
         p={6}
         borderRadius={7}
         boxShadow="dark-lg"
-        border='none'
+        border="none"
       >
         <Text
           as="h1"
@@ -110,18 +117,19 @@ function LoginForm() {
                 <FaUser color="grey" />
               </InputLeftElement>
               <Input
+                id="emailOrUsername"
                 borderBottom="1px solid grey"
                 mb={4}
                 type="text"
                 placeholder="Type your username or email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                autoComplete="username"
               />
             </InputGroup>
             {emailError && (
               <Text color="red.500" fontSize="sm">
                 {emailError}
-                
               </Text>
             )}
 
@@ -131,16 +139,28 @@ function LoginForm() {
                 <FaLock color="grey" />
               </InputLeftElement>
               <Input
+                id="password"
                 borderBottom="1px solid grey"
                 mb={4}
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Type your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
               />
+              <InputRightElement width="4.5rem">
+                <Button
+                  h="1.75rem"
+                  size="sm"
+                  onClick={togglePasswordVisibility}
+                  variant="ghost"
+                >
+                  {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                </Button>
+              </InputRightElement>
             </InputGroup>
             {passwordError && (
-              <Text color="red.500" fontSize="sm" textAlign='left'>
+              <Text color="red.500" fontSize="sm" textAlign="left">
                 {passwordError}
               </Text>
             )}
