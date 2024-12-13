@@ -10,27 +10,32 @@ import {
   Avatar,
   Text,
 } from "@chakra-ui/react";
-import { FiLogOut } from "react-icons/fi"; 
+import { FiLogOut } from "react-icons/fi";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { logout } from "../store/authSlice";
 import { useNavigate } from "react-router-dom";
 
-
-
-
 function UserDashNavbar() {
-const username= useSelector((state:RootState)=>state.auth.user?.username);
-const dispatch = useDispatch();
-const navigate = useNavigate();
-const handleLogout=()=>{
-    dispatch(logout())
-    navigate("/landingPage")
-}
+  const username = useSelector((state: RootState) => state.auth.user?.username);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/landingPage");
+  };
   return (
     <>
-      <Flex bg="#689496" h="70px" boxShadow="2xl" alignItems="center" p={5}>
+      <Flex
+        bg="#689496"
+        w="100%"
+        h={{ base: "50px", md: "60px" }}
+        p={{ base: 3, md: 5 }}
+        bgColor="white"
+        boxShadow="xl"
+        alignItems="center"
+      >
         {/* Logo Section */}
         <Flex alignItems="center" w="100%">
           <Image src={logo} alt="logo" w="140px" />
@@ -41,12 +46,10 @@ const handleLogout=()=>{
           <MenuButton
             as={IconButton}
             aria-label="Options"
-            icon={<HamburgerIcon />}
+            icon={<HamburgerIcon color="teal.600" w={5} h={5} />}
             variant="outline"
-            borderColor="white"
             color="white"
-            _hover={{ bg: "teal.600" }}
-            _active={{ bg: "teal.700" }}
+            _active={{ bg: "grey.700" }}
           />
           <MenuList bg="smokewhite" borderColor="#689496">
             <Flex alignItems="center" p={3}>
