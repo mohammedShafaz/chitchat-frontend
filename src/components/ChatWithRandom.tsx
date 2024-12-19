@@ -1,17 +1,13 @@
-import { Button, Flex } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import RandomButton from "./ui/RandomButton";
+import { FaComment, FaVideo } from "react-icons/fa";
 
 function ChatWithRandom() {
   return (
     <>
-      <Flex justifyContent="space-evenly">
-      <RandomButton btName={"Chat With Random"}/>
-        <Button
-          w={20}
-          h={20}
-          borderRadius={40}
-          backgroundColor="green.600"
-        ></Button>
+      <Flex justifyContent="space-evenly" alignContent="center"  maxW="100%" maxH="100%" p={10}>
+        <RandomButton icon={FaComment} />
+        <RandomButton icon={FaVideo} />
       </Flex>
     </>
   );

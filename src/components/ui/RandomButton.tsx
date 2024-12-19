@@ -1,17 +1,32 @@
-import { Button } from "@chakra-ui/react";
+import { Button, Icon, keyframes, Text } from "@chakra-ui/react";
 import React from "react";
 
+
 interface IRandomButton {
-  btName: string;
+  icon: React.ElementType; 
 }
-const RandomButton: React.FC<IRandomButton> = ({ btName }) => {
+// Define the keyframes for perpetual pulsating animation
+const pulse = keyframes`
+  0%, 100% { transform: scale(1); }   
+  50% { transform: scale(1.3); }    
+`;
+
+const RandomButton: React.FC<IRandomButton> = ({ icon }) => {
+  const pulseAnimation = `${pulse} 1.5s infinite ease-in-out`; // Animation timing
+
   return (
-    <>
-      <Button borderRadius={40} backgroundColor="green.600" w={20} h={20}>
-        {btName}
-      </Button>
-      ;
-    </>
+    <Button
+      borderRadius="120px"
+      backgroundColor="green.400"
+      w="190px"
+      h="190px"
+      animation={pulseAnimation}
+      _hover={{
+        backgroundColor: "green.500",
+      }}
+    >
+       <Icon as={icon} boxSize={6} color="white" /> 
+    </Button>
   );
 };
 

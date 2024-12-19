@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
-import { Text, Box, Flex } from "@chakra-ui/react";
+import { Text, Box } from "@chakra-ui/react";
 import UserDashNavbar from "../components/UserDashNavbar";
 import ChatWithRandom from "../components/ChatWithRandom";
 
@@ -8,14 +8,14 @@ function Profile() {
   const user = useSelector((state: RootState) => state.auth.user);
   return (
     <>
-      <Box>
+      <Box mb={10}>
         <UserDashNavbar />
-        <Text> Welcome {user?.username}</Text>
+        <Text> Welcome {`${user?.firstName} ${user?.lastName}`}</Text>
         <br />
       </Box>
-      <Flex alignItems="center" justifyContent="center">
+      <Box maxW="100%" mt={10}>
         <ChatWithRandom />
-      </Flex>
+      </Box>
     </>
   );
 }
